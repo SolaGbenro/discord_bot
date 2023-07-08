@@ -63,7 +63,8 @@ def chatgpt_response(prompt: str, model: str = "gpt-3.5-turbo-0613") -> Optional
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7
+            temperature=0.7,
+            max_tokens=400
         )
         # Update the token usage
         update_token_usage(response, "outputs/token_usage.txt")
