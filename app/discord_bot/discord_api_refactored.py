@@ -2,9 +2,11 @@
 import os
 import discord
 import logging
+from dotenv import load_dotenv
 import re
 from typing import Tuple
 import openai
+from app.database.database_manager import create_connection, insert_conversation, close_connection
 from dotenv import load_dotenv
 from app.chatgpt_ai.openai_refactored import chatgpt_response
 
@@ -38,6 +40,14 @@ class MyClient(discord.Client):
             try:
                 bot_response = chatgpt_response(prompt=user_message)
                 await message.channel.send(f"Answer: {bot_response}")
+
+                # Save the incoming message to the database
+                load_dotenv()
+                sqlite_db_path = os.getenv('SQLITE_PATH')
+                conn = create_connection(sqlite_db_path)
+                if conn is not None:
+                    insert_conversation(conn, (str(message.author), user_message, bot_response, str(message.created_at)))
+                    close_connection(conn)
             except openai.api.OpenAIAPIError as e:
                 logging.error(f"Error from OpenAI API: {e}")
             except Exception as e:
@@ -54,7 +64,8 @@ class MyClient(discord.Client):
         Returns:
         Tuple[str, str]: A tuple containing the command and the user's message.
         """
-        match = re.match(r'^(\/ai|\/bot|\/gpt)(.*)$', message_content)
+        # bot activation commands are '/ai', '/bot', '/gpt'
+        match = re.match(r'^(/ai|/bot|/gpt)(.*)$', message_content)
         if match:
             return match.group(1), match.group(2).strip()
         return '', ''

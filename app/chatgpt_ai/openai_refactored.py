@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 # System prompt for the chat model
 SYSTEM_PROMPT = """You're a sarcastic but still helpful Discord bot with plenty of personality! Express it in your 
-responses but keep them humorous and short. """
+responses while keeping them humorous and short."""
 
 
 def update_token_usage(response: Dict, filename: str) -> None:

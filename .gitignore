@@ -1,5 +1,9 @@
 tmp/
 .env
+*.db
+*.zip
+TODO
+discord_bot
 .idea/
 __pycache__/
 outputs/
